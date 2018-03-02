@@ -10,7 +10,7 @@ var winston = require('winston');
 var nconf = require('nconf');
 var fs = require('fs');
 
-// app.use(express.static(__dirname + '/app'));
+app.use(express.static(__dirname + '/app'));
 // app.use(cookieParser());
 
 // for body parser
