@@ -18,11 +18,11 @@ app.use(cookieParser());
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-var server = app.listen(3000, function() {
+var server = app.listen(80, function() {
     // var host = server.address().address;
     var port = server.address().port;
   // console.log('Listening on port %d', server.address().port);
-  console.log('App listening at localhost:%s', port);
+  console.log('App listening at %s', port);
   // start();
 });
 
