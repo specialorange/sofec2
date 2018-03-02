@@ -363,11 +363,11 @@ var server = app.listen(8080, function() {
 // });
 
 
-// app.get('/hello', function (req, res) {
-//   var msg = 'hellooooo';
-//   console.log(msg);
-//   res.send(msg);
-// });
+app.get('/hello', function (req, res) {
+  var msg = 'hellooooo';
+  console.log(msg);
+  res.send(msg);
+});
 
 // app.post('/api/login', function (req, res) {
 //   console.log('Getting a login request with a body of: ');
