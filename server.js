@@ -10,65 +10,68 @@ var winston = require('winston');
 var nconf = require('nconf');
 var fs = require('fs');
 
-console.log('process.cwd()');
-console.log(process.cwd());
+// console.log('process.cwd()');
+// console.log(process.cwd());
 
-console.log('before');
-console.log(__dirname);
+// console.log('before');
+// console.log(__dirname);
 
-console.log('process.env.SOF_CONFIG');
-console.log(process.env.SOF_CONFIG);
+// console.log('process.env.SOF_CONFIG');
+// console.log(process.env.SOF_CONFIG);
 
 // First consider command line arguments and environment variables, respectively.
 // So it would be started with something like node server.js --foo bar
 //  and the parameter foo will have a value of bar
-nconf
-  // To access a value in the file, use nconf.get('key') to return a value
-  // .file({ file: '/home/collin/SoundOfFractions/config.json' })
-  .argv()
-  .env()
-  .file({ file: nconf.get('CONFIG') });
+// nconf
+//   // To access a value in the file, use nconf.get('key') to return a value
+//   // .file({ file: '/home/collin/SoundOfFractions/config.json' })
+//   .argv()
+//   .env()
+//   .file({ file: nconf.get('CONFIG') });
 
-console.log('CONFIG');
-console.log(nconf.get('CONFIG'));
+// console.log('CONFIG');
+// console.log(nconf.get('CONFIG'));
 
-console.log('after');
-console.log(__dirname);
-console.log(nconf.get('key'));
-console.log(nconf.get('cert'));
-console.log(nconf.get('httpsPort'));
-console.log(nconf.get('sqlDatabase'));
-console.log(nconf.get('sqlUsername'));
-console.log(nconf.get('sqlPassword'));
+// console.log('after');
+// console.log(__dirname);
+// console.log(nconf.get('key'));
+// console.log(nconf.get('cert'));
+// console.log(nconf.get('httpsPort'));
+// console.log(nconf.get('sqlDatabase'));
+// console.log(nconf.get('sqlUsername'));
+// console.log(nconf.get('sqlPassword'));
 
 app.use(express.static(__dirname + '/app'));
 app.use(cookieParser());
 
-console.log('after-after');
-console.log(__dirname);
+// console.log('after-after');
+// console.log(__dirname);
 
-simpleApp.listen(8080);
-simpleApp.get('*',function(req,res){  
-  console.log('gh');
-  res.redirect(nconf.get('baseURL')+req.url)
-})
-
-var https = require('https');
-var secureServer = https.createServer({
-    key: fs.readFileSync(nconf.get('key'), 'utf8'),
-    cert: fs.readFileSync(nconf.get('cert'), 'utf8'),
-    ca: [
-            fs.readFileSync(nconf.get('ca1'), 'utf8'),
-            fs.readFileSync(nconf.get('ca2'), 'utf8'),
-            fs.readFileSync(nconf.get('ca3'), 'utf8')
-        ],
-    rejectUnauthorized: false
-}, app).listen(nconf.get('httpsPort'), function() {
-    // var host = secureServer.address().address;
-    var port = secureServer.address().port;
-    start();
-    console.log('Secure Express server listening at localhost:%s', port);
+// simpleApp.listen(8080);
+// simpleApp.get('*',function(req,res){  
+//   console.log('gh');
+//   res.redirect(nconf.get('baseURL')+req.url)
+// })
+app.use(function(req, res, next) {
+  var reqType = req.headers["x-forwarded-proto"];
+  reqType == 'https' ? next() : res.redirect("https://" + req.headers.host + req.url);
 });
+// var https = require('https');
+// var secureServer = https.createServer({
+//     key: fs.readFileSync(nconf.get('key'), 'utf8'),
+//     cert: fs.readFileSync(nconf.get('cert'), 'utf8'),
+//     ca: [
+//             fs.readFileSync(nconf.get('ca1'), 'utf8'),
+//             fs.readFileSync(nconf.get('ca2'), 'utf8'),
+//             fs.readFileSync(nconf.get('ca3'), 'utf8')
+//         ],
+//     rejectUnauthorized: false
+// }, app).listen(nconf.get('httpsPort'), function() {
+//     // var host = secureServer.address().address;
+//     var port = secureServer.address().port;
+//     start();
+//     console.log('Secure Express server listening at localhost:%s', port);
+// });
 
 var Sequelize = require('sequelize'),
                           // ('database', 'username', 'password');
