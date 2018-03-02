@@ -10,20 +10,26 @@ var winston = require('winston');
 var nconf = require('nconf');
 var fs = require('fs');
 
-app.use(express.static(__dirname + '/app'));
-app.use(cookieParser());
+// app.use(express.static(__dirname + '/app'));
+// app.use(cookieParser());
 
 // for body parser
 // http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+// app.use(bodyParser.json({limit: '50mb'}));
+// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
-var server = app.listen(8080, function() {
-    // var host = server.address().address;
-    var port = server.address().port;
+app.listen(8080, function() {
+  // var host = server.address().address;
+  var port = server.address().port;
   // console.log('Listening on port %d', server.address().port);
   console.log('App listening at %s', port);
   // start();
+});
+
+app.get('/hello', function (req, res) {
+  var msg = 'hellooooo';
+  console.log(msg);
+  res.send(msg);
 });
 
 // console.log('process.cwd()');
@@ -363,11 +369,7 @@ var server = app.listen(8080, function() {
 // });
 
 
-app.get('/hello', function (req, res) {
-  var msg = 'hellooooo';
-  console.log(msg);
-  res.send(msg);
-});
+
 
 // app.post('/api/login', function (req, res) {
 //   console.log('Getting a login request with a body of: ');
