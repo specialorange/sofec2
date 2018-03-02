@@ -52,6 +52,7 @@ console.log(__dirname);
 //   console.log('gh');
 //   res.redirect(nconf.get('baseURL')+req.url)
 // })
+var server = require('http').createServer(app);
 app.use(function(req, res, next) {
   var reqType = req.headers["x-forwarded-proto"];
   reqType == 'https' ? next() : res.redirect("https://" + req.headers.host + req.url);
