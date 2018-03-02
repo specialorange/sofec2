@@ -47,16 +47,16 @@ app.use(cookieParser());
 console.log('after-after');
 console.log(__dirname);
 
-// simpleApp.listen(8080);
-// simpleApp.get('*',function(req,res){  
-//   console.log('gh');
-//   res.redirect(nconf.get('baseURL')+req.url)
-// })
-var server = require('http').createServer(app);
-app.use(function(req, res, next) {
-  var reqType = req.headers["x-forwarded-proto"];
-  reqType == 'https' ? next() : res.redirect("https://" + req.headers.host + req.url);
-});
+simpleApp.listen(8080);
+simpleApp.get('*',function(req,res){  
+  console.log('gh');
+  res.redirect(nconf.get('baseURL')+req.url)
+})
+// var server = require('http').createServer(app);
+// app.use(function(req, res, next) {
+//   var reqType = req.headers["x-forwarded-proto"];
+//   reqType == 'https' ? next() : res.redirect("https://" + req.headers.host + req.url);
+// });
 // var https = require('https');
 // var secureServer = https.createServer({
 //     key: fs.readFileSync(nconf.get('key'), 'utf8'),
