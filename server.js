@@ -47,11 +47,11 @@ app.use(cookieParser());
 console.log('after-after');
 console.log(__dirname);
 
-simpleApp.listen(8080);
-simpleApp.get('*',function(req,res){  
-  console.log('gh');
-  res.redirect(nconf.get('baseURL')+req.url)
-})
+// simpleApp.listen(8080);
+// simpleApp.get('*',function(req,res){  
+//   console.log('gh');
+//   // res.redirect(nconf.get('baseURL')+req.url)
+// })
 // var server = require('http').createServer(app);
 // app.use(function(req, res, next) {
 //   var reqType = req.headers["x-forwarded-proto"];
@@ -344,13 +344,13 @@ function start() {
   });
 }
 
-// var server = app.listen(3000, function() {
-//     var host = server.address().address;
-//     var port = server.address().port;
-//   // console.log('Listening on port %d', server.address().port);
-//   console.log('App listening at localhost:%s', port);
-//   start();
-// });
+var server = app.listen(3000, function() {
+    var host = server.address().address;
+    var port = server.address().port;
+  // console.log('Listening on port %d', server.address().port);
+  console.log('App listening at localhost:%s', port);
+  start();
+});
 
 
 app.get('/hello', function (req, res) {
