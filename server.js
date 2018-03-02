@@ -13,8 +13,8 @@ var fs = require('fs');
 // console.log('process.cwd()');
 // console.log(process.cwd());
 
-// console.log('before');
-// console.log(__dirname);
+console.log('before');
+console.log(__dirname);
 
 // console.log('process.env.SOF_CONFIG');
 // console.log(process.env.SOF_CONFIG);
@@ -44,8 +44,8 @@ var fs = require('fs');
 app.use(express.static(__dirname + '/app'));
 app.use(cookieParser());
 
-// console.log('after-after');
-// console.log(__dirname);
+console.log('after-after');
+console.log(__dirname);
 
 // simpleApp.listen(8080);
 // simpleApp.get('*',function(req,res){  
