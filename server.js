@@ -20,9 +20,9 @@ var fs = require('fs');
 
 app.listen(8080, function() {
   // var host = server.address().address;
-  var port = server.address().port;
+  // var port = server.address().port;
   // console.log('Listening on port %d', server.address().port);
-  console.log('App listening at %s', port);
+  console.log('App listening at 8080');
   // start();
 });
 
