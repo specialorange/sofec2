@@ -1,36 +1,75 @@
-var express = require('express');
-var bodyParser = require('body-parser');
-var app = express();
-var simpleApp = express();
-var RSVP = require('rsvp');
-var CryptoJS = require('crypto-js');
-var uuid = require('node-uuid');
-var cookieParser = require('cookie-parser');
-var winston = require('winston');
-var nconf = require('nconf');
-var fs = require('fs');
+var http = require("http"),
+url = require("url"),
+path = require("path"),
+fs = require("fs")
+port = process.argv[2] || 8888;
 
-app.use(express.static(__dirname + '/app'));
-// app.use(cookieParser());
+http.createServer(function(request, response) {
 
-// for body parser
-// http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+  var uri = url.parse(request.url).pathname
+    , filename = path.join(process.cwd(), uri);
 
-app.listen(8080, function() {
-  // var host = server.address().address;
-  // var port = server.address().port;
-  // console.log('Listening on port %d', server.address().port);
-  console.log('App listening at 8080');
-  // start();
-});
+  path.exists(filename, function(exists) {
+    if(!exists) {
+      response.writeHead(404, {"Content-Type": "text/plain"});
+      response.write("404 Not Found\n");
+      response.end();
+      return;
+    }
 
-app.get('/hello', function (req, res) {
-  var msg = 'hellooooo';
-  console.log(msg);
-  res.send(msg);
-});
+    if (fs.statSync(filename).isDirectory()) filename += '/index.html';
+
+    fs.readFile(filename, "binary", function(err, file) {
+      if(err) {        
+        response.writeHead(500, {"Content-Type": "text/plain"});
+        response.write(err + "\n");
+        response.end();
+        return;
+      }
+
+      response.writeHead(200);
+      response.write(file, "binary");
+      response.end();
+    });
+  });
+}).listen(parseInt(port, 10));
+
+console.log("Static file server running at\n  => http://localhost:" + port + "/\nCTRL + C to shutdown");
+
+
+// var express = require('express');
+// var bodyParser = require('body-parser');
+// var app = express();
+// var simpleApp = express();
+// var RSVP = require('rsvp');
+// var CryptoJS = require('crypto-js');
+// var uuid = require('node-uuid');
+// var cookieParser = require('cookie-parser');
+// var winston = require('winston');
+// var nconf = require('nconf');
+// var fs = require('fs');
+
+// app.use(express.static(__dirname + '/app'));
+// // app.use(cookieParser());
+
+// // for body parser
+// // http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
+// // app.use(bodyParser.json({limit: '50mb'}));
+// // app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+// app.listen(8080, function() {
+//   // var host = server.address().address;
+//   // var port = server.address().port;
+//   // console.log('Listening on port %d', server.address().port);
+//   console.log('App listening at 8080');
+//   // start();
+// });
+
+// app.get('/hello', function (req, res) {
+//   var msg = 'hellooooo';
+//   console.log(msg);
+//   res.send(msg);
+// });
 
 // console.log('process.cwd()');
 // console.log(process.cwd());
