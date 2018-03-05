@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var simpleApp = express();
+var cookieParser = require('cookie-parser');
 
 app.use(express.static(__dirname + '/app'));
 app.use(cookieParser());
@@ -21,7 +22,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // var RSVP = require('rsvp');
 // var CryptoJS = require('crypto-js');
 // var uuid = require('node-uuid');
-// var cookieParser = require('cookie-parser');
 // var winston = require('winston');
 // var nconf = require('nconf');
 // var fs = require('fs');
