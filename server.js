@@ -13,10 +13,10 @@ var winston = require('winston');
 var nconf = require('nconf');
 var fs = require('fs');
 
-// app.use(express.static(__dirname + '/app'));
+app.use(express.static(__dirname + '/app'));
 // app.use(express.static(path.join(__dirname, '/app'), { maxAge: 86400000 });
 // app.use(express.static(path.normalize(path.join(__dirname, '/app')), { maxAge: 86400000 }));
-app.use(express.static(process.env.PWD + '/app'));
+// app.use(express.static(process.env.PWD + '/app'));
 // console.log('express.static here')
 // console.log(express.static())
 // console.log('__dirname')
@@ -31,7 +31,7 @@ app.use(express.static(process.env.PWD + '/app'));
 // app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // https.createServer(app).listen(process.env.npm_package_config_port)
 
-app.listen(8080, function() {
+app.listen((process.env.PORT || 8080), function() {
   // var host = server.address().address;
   // var port = server.address().port;
   // console.log('Listening on port %d', server.address().port);
