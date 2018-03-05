@@ -1,3 +1,6 @@
+process.env.PWD = process.cwd()
+
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
@@ -10,7 +13,9 @@ var winston = require('winston');
 var nconf = require('nconf');
 var fs = require('fs');
 
-app.use(express.static(__dirname + '/app'));
+// app.use(express.static(__dirname + '/app'));
+// app.use(express.static(path.join(__dirname, '/app'), { maxAge: 86400000 });
+app.use(express.static(path.normalize(path.join(__dirname, '/app')), { maxAge: 86400000 }));
 // console.log('express.static here')
 // console.log(express.static())
 // console.log('__dirname')
