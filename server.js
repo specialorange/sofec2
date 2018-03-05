@@ -22,24 +22,24 @@ console.log(process.env.SOF_CONFIG);
 // First consider command line arguments and environment variables, respectively.
 // So it would be started with something like node server.js --foo bar
 //  and the parameter foo will have a value of bar
-nconf
-  // To access a value in the file, use nconf.get('key') to return a value
-  // .file({ file: '/home/collin/SoundOfFractions/config.json' })
-  .argv()
-  .env()
-  .file({ file: nconf.get('CONFIG') });
+// nconf
+//   // To access a value in the file, use nconf.get('key') to return a value
+//   // .file({ file: '/home/collin/SoundOfFractions/config.json' })
+//   .argv()
+//   .env()
+//   .file({ file: nconf.get('CONFIG') });
 
-console.log('CONFIG');
-console.log(nconf.get('CONFIG'));
+// console.log('CONFIG');
+// console.log(nconf.get('CONFIG'));
 
-console.log('after');
-console.log(__dirname);
-console.log(nconf.get('key'));
-console.log(nconf.get('cert'));
-console.log(nconf.get('httpsPort'));
-console.log(nconf.get('sqlDatabase'));
-console.log(nconf.get('sqlUsername'));
-console.log(nconf.get('sqlPassword'));
+// console.log('after');
+// console.log(__dirname);
+// console.log(nconf.get('key'));
+// console.log(nconf.get('cert'));
+// console.log(nconf.get('httpsPort'));
+// console.log(nconf.get('sqlDatabase'));
+// console.log(nconf.get('sqlUsername'));
+// console.log(nconf.get('sqlPassword'));
 
 app.use(express.static(__dirname + '/app'));
 app.use(cookieParser());
