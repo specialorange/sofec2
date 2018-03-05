@@ -15,7 +15,8 @@ var fs = require('fs');
 
 // app.use(express.static(__dirname + '/app'));
 // app.use(express.static(path.join(__dirname, '/app'), { maxAge: 86400000 });
-app.use(express.static(path.normalize(path.join(__dirname, '/app')), { maxAge: 86400000 }));
+// app.use(express.static(path.normalize(path.join(__dirname, '/app')), { maxAge: 86400000 }));
+app.use(express.static(process.env.PWD + '/app'));
 // console.log('express.static here')
 // console.log(express.static())
 // console.log('__dirname')
