@@ -2,22 +2,38 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var simpleApp = express();
-var RSVP = require('rsvp');
-var CryptoJS = require('crypto-js');
-var uuid = require('node-uuid');
-var cookieParser = require('cookie-parser');
-var winston = require('winston');
-var nconf = require('nconf');
-var fs = require('fs');
 
-console.log('process.cwd()');
-console.log(process.cwd());
+app.use(express.static(__dirname + '/app'));
+app.use(cookieParser());
 
-console.log('before');
+console.log('after-after');
 console.log(__dirname);
 
-console.log('process.env.SOF_CONFIG');
-console.log(process.env.SOF_CONFIG);
+app.listen((process.env.PORT || 8080), function() {
+  console.log('App listening at 8080');
+});
+// // for body parser
+// // http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+
+// var RSVP = require('rsvp');
+// var CryptoJS = require('crypto-js');
+// var uuid = require('node-uuid');
+// var cookieParser = require('cookie-parser');
+// var winston = require('winston');
+// var nconf = require('nconf');
+// var fs = require('fs');
+
+// console.log('process.cwd()');
+// console.log(process.cwd());
+
+// console.log('before');
+// console.log(__dirname);
+
+// console.log('process.env.SOF_CONFIG');
+// console.log(process.env.SOF_CONFIG);
 
 // First consider command line arguments and environment variables, respectively.
 // So it would be started with something like node server.js --foo bar
@@ -41,19 +57,6 @@ console.log(process.env.SOF_CONFIG);
 // console.log(nconf.get('sqlUsername'));
 // console.log(nconf.get('sqlPassword'));
 
-app.use(express.static(__dirname + '/app'));
-app.use(cookieParser());
-
-console.log('after-after');
-console.log(__dirname);
-
-app.listen((process.env.PORT || 8080), function() {
-  // var host = server.address().address;
-  // var port = server.address().port;
-  // console.log('Listening on port %d', server.address().port);
-  console.log('App listening at 8080');
-  // start();
-});
 
 // simpleApp.listen(8080);
 // simpleApp.get('*',function(req,res){  
@@ -109,10 +112,6 @@ app.listen((process.env.PORT || 8080), function() {
 // //
 
 
-// // for body parser
-// // http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
-// app.use(bodyParser.json({limit: '50mb'}));
-// app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 // // parse application/x-www-form-urlencoded
 // // app.use(bodyParser.urlencoded({ extended: false }));
 
