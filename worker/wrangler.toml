@@ -10,7 +10,7 @@ routes = [
 [[d1_databases]]
 binding = "DB"
 database_name = "sof-logs"
-database_id = "REPLACE_AFTER_CREATE"
+database_id = "e310842c-3c2c-4482-9f48-592fc0a1af2a"
 migrations_dir = "migrations"
 
 # Per-IP limit: 120 log posts per minute is far above a real student clicking around.
