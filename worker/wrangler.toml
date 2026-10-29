@@ -1,0 +1,20 @@
+name = "sof-logging"
+main = "src/index.js"
+compatibility_date = "2025-09-01"
+
+# Only /api/* on specialorange.org goes to this Worker; the rest of the site stays on DreamHost.
+routes = [
+  { pattern = "specialorange.org/api/*", zone_name = "specialorange.org" },
+]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "sof-logs"
+database_id = "REPLACE_AFTER_CREATE"
+migrations_dir = "migrations"
+
+# Per-IP limit: 120 log posts per minute is far above a real student clicking around.
+[[ratelimits]]
+name = "RATE_LIMITER"
+namespace_id = "1001"
+simple = { limit = 120, period = 60 }
