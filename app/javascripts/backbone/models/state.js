@@ -65,6 +65,9 @@ define([
       this.signature = 0;
       // Start each recording fresh so the 10-second limit measures this take, not the last one
       this.startRecordingTime = undefined;
+      // Clicking record again must not stack a second mic connection on the first
+      this.releaseMic();
+      this.noiseFloor = null;
 
       if (this.hasGetUserMedia()) {
         console.log("we do have user media access.");
@@ -81,6 +84,7 @@ define([
         getMic({audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}}, function(stream) {
           // Chrome starts an AudioContext suspended until a user gesture; the record click counts
           if (µthis.context.state === 'suspended') { µthis.context.resume(); }
+          µthis.micStream = stream;
           var microphone = µthis.context.createMediaStreamSource(stream);
           µthis.microphone = microphone;
           µthis.micGain = µthis.context.createGain();
@@ -139,6 +143,17 @@ define([
       }
       this.totals = this.totals / waveform.length;
       var RMS = Math.sqrt(this.totals);
+
+      // Adaptive tap threshold. 2015 used a fixed 0.05, tuned with Chrome's auto gain on.
+      // Now: track the room's background level and count anything well above it, never
+      // stricter than the old 0.05 and never below 0.01 so silence can't trigger.
+      if (this.noiseFloor === null || this.noiseFloor === undefined) { this.noiseFloor = RMS; }
+      var threshold = Math.min(0.05, Math.max(0.01, this.noiseFloor * 6));
+      if (RMS <= threshold) { this.noiseFloor = this.noiseFloor * 0.98 + RMS * 0.02; }
+      if (this.isWaiting && (!this.lastLevelLog || time - this.lastLevelLog > 1000)) {
+        console.debug('mic level ' + RMS.toFixed(4) + ', tap threshold ' + threshold.toFixed(4));
+        this.lastLevelLog = time;
+      }
       // console.warn('Time: ' + time + ' RMS: ' + RMS);
       // console.warn(this.prevTime);
 
@@ -146,7 +161,7 @@ define([
       var elapsedTime = time - this.prevTime;
 
       // If we are still tapping, and are still recording (isWaiting = true), and the RMS is greater than .05
-      if(RMS > 0.05 && (elapsedTime > 200) && this.isTapping && this.isWaiting) {
+      if(RMS > threshold && (elapsedTime > 200) && this.isTapping && this.isWaiting) {
         console.log('RMS = ' + RMS);
         console.log('elapsed time: ' + elapsedTime);
         this.prevTime = time;
@@ -486,6 +501,14 @@ define([
       this.processWaveform(time, this.waveform);
     },
 
+    // Disconnect the audio nodes and stop the mic so the browser's recording indicator turns off
+    releaseMic: function() {
+      if(this.jsNode) { this.jsNode.onaudioprocess = null; this.jsNode.disconnect(); this.jsNode = null; }
+      if(this.micGain) { this.micGain.disconnect(); this.micGain = null; }
+      if(this.microphone) { this.microphone.disconnect(); this.microphone = null; }
+      if(this.micStream) { this.micStream.getTracks().forEach(function(t) { t.stop(); }); this.micStream = null; }
+    },
+
     stopRecording: function() {
       this.signature = 0;
       this.startRecordingTime = undefined;
@@ -498,9 +521,7 @@ define([
       this.beatArray = new Array();
       this.waitCount = 0;
       this.isWaiting = true;
-      if(this.microphone) { this.microphone.disconnect(); }
-      if(this.jsNode) { this.jsNode.disconnect(); }
-      if(this.micGain) { this.micGain.disconnect(); }
+      this.releaseMic();
 
       // Let the measureRepView know that we are stopping so the view can update the microphone button
       this.trigger('recordingComplete');
