@@ -6,7 +6,7 @@
 
 This project is a web app that uses Javascript, Web Audio API, Node, D3, Backbone, Jquery, Underscore, and lots of rythym! Web Audio is only accessible via a compatible browser (currently (2/15) only Chrome).
 
-For a single page demo click [here](http://compthink.cs.vt.edu) or [here](http://compthink.cs.vt.edu:3000). (Sorry, we sometimes need to switch ports for various reasons).
+Try the live demo at [specialorange.org/sof](https://specialorange.org/sof/).
 
 Previous version were built Using Ruby on Rails.   Check the Master branch for working versions.
 
