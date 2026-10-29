@@ -68,6 +68,7 @@ define([
       // Clicking record again must not stack a second mic connection on the first
       this.releaseMic();
       this.noiseFloor = null;
+      this.tapArmed = true;
 
       if (this.hasGetUserMedia()) {
         console.log("we do have user media access.");
@@ -163,7 +164,12 @@ define([
       var elapsedTime = time - this.prevTime;
 
       // If we are still tapping, and are still recording (isWaiting = true), and the RMS is greater than .05
-      if(RMS > threshold && (elapsedTime > 200) && this.isTapping && this.isWaiting) {
+      // A knock rings for a while. Only re-arm once the sound has dropped back near silence,
+      // so one ringing tap is one beat instead of a new beat every 200 ms.
+      if (this.tapArmed === false && RMS < threshold * 0.5) { this.tapArmed = true; }
+
+      if(RMS > threshold && this.tapArmed !== false && (elapsedTime > 200) && this.isTapping && this.isWaiting) {
+        this.tapArmed = false;
         console.log('RMS = ' + RMS);
         console.log('elapsed time: ' + elapsedTime);
         this.prevTime = time;
@@ -218,7 +224,9 @@ define([
           for(var i = 0; i < this.timeIntervals.length; i++) {
             songTotalTimeDuration += this.timeIntervals[i];
           }
-          this.average = songTotalTimeDuration / this.timeIntervals.length;
+          // timeIntervals starts with a placeholder 0 for the first beat; leaving it in the
+          // average halved it, so recording stopped after about one real gap.
+          this.average = songTotalTimeDuration / Math.max(1, this.timeIntervals.length - 1);
           console.log('average in ms: ' + this.average + ' || average in BPM: ' + 60*1000/this.average);
 
           // If there was already a waitInterval, we need to clear it and reset it for another new recording
@@ -396,7 +404,9 @@ define([
           for(var i = 0; i < this.timeIntervals.length; i++) {
             songTotalTimeDuration += this.timeIntervals[i];
           }
-          this.average = songTotalTimeDuration / this.timeIntervals.length;
+          // timeIntervals starts with a placeholder 0 for the first beat; leaving it in the
+          // average halved it, so recording stopped after about one real gap.
+          this.average = songTotalTimeDuration / Math.max(1, this.timeIntervals.length - 1);
           console.log('average in ms: ' + this.average + ' || average in BPM: ' + 60*1000/this.average);
 
           // Waiting for the listener to stop tapping
