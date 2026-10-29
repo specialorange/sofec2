@@ -89,8 +89,9 @@ define([
           var microphone = µthis.context.createMediaStreamSource(stream);
           µthis.microphone = microphone;
           µthis.micGain = µthis.context.createGain();
-          // Gain stays at 1. The 2015 code set it to the undefined `this.micLevel`, which browsers
-          // ignored, so 1 is the level tap detection was tuned at.
+          // 4x boost: with the browser's auto gain off, laptop mics deliver taps barely above
+          // the quietest threshold. The threshold adapts to the boosted background too.
+          µthis.micGain.gain.value = 4;
           µthis.jsNode = µthis.context.createScriptProcessor(512, 2, 2);
           µthis.microphone.connect(µthis.micGain);
           // (No longer routing the mic to the speakers; it fed back into the mic and caused false taps)
