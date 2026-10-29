@@ -1780,6 +1780,8 @@ define([
     },
     // Part of the transistion process, when a user clicks the 'delta'
     transitionRepresentation: function(e){
+      // e.toElement was Chrome-only and is gone in modern browsers; e.target is the standard
+      var clickedEl = e.toElement || e.target;
       // Starting A transition
       if(!$('#measure-rep-'+this.model.cid).hasClass('transition-rep')){
         console.log('transitioning a rep');
@@ -1787,10 +1789,10 @@ define([
         // Bold the delta to green
         $('#measure-rep-'+this.model.cid).addClass('transition-rep');
         // add the message about directions of what to do
-        d3.select(e.toElement.parentElement).append('text').attr('x',35).attr('y',20).classed('transition-message transition-message-top', true).text('Click a representation')
-        d3.select(e.toElement.parentElement).append('text').attr('x',35).attr('y',40).classed('transition-message transition-message-bottom', true).text('to transition to...')
+        d3.select(clickedEl.parentElement).append('text').attr('x',35).attr('y',20).classed('transition-message transition-message-top', true).text('Click a representation')
+        d3.select(clickedEl.parentElement).append('text').attr('x',35).attr('y',40).classed('transition-message transition-message-bottom', true).text('to transition to...')
 
-        d3.select(e.toElement.parentElement).append('image')
+        d3.select(clickedEl.parentElement).append('image')
           .attr("xlink:href", "images/spinner.gif")
           .attr("x", 140)
           .attr("y", 22)
@@ -1809,7 +1811,7 @@ define([
             // remove the message about directions
             $('#measure-rep-'+µthis.model.cid + ' svg .top-rep-buttons text.transition-message').remove()
             // Make a message about not clicking in time
-            d3.select(e.toElement.parentElement).append('text').attr('x',35).attr('y',20).classed('transition-message transition-message-top', true).text('Oops!! Ran out of time...')
+            d3.select(clickedEl.parentElement).append('text').attr('x',35).attr('y',20).classed('transition-message transition-message-top', true).text('Oops!! Ran out of time...')
 
             Logging.logStorage('Clicked a plus on the ' + µthis.model.get('label') + ', but failed to add a rep in 6 secs.'); 
             setTimeout(function(){

@@ -196,22 +196,24 @@ define([
     },
     // To add a representation to a measure, we first add the class '.cs' to the htrack to know which measure of which HTrack to add it to
     toggleAddRepresentationToHTrack: function(e) {
+      // e.toElement was Chrome-only and is gone in modern browsers; e.target is the standard
+      var clickedEl = e.toElement || e.target;
       // If it is already clicked
-      if(e.toElement.parentElement.classList.contains('cs')) {
-        e.toElement.parentElement.classList.remove('cs');
+      if(clickedEl.parentElement.classList.contains('cs')) {
+        clickedEl.parentElement.classList.remove('cs');
         console.info('clicked the plus sign to turn it off');
         this.model.set('awaitingAdd', false);
       // If it is not clicked
-      } else if(!e.toElement.parentElement.classList.contains('cs')) {
+      } else if(!clickedEl.parentElement.classList.contains('cs')) {
         // remove all other plus signs
         $('.cs').removeClass('cs'); 
         $('.rep-spinner').remove(); 
 
-        e.toElement.parentElement.classList.add('cs');
+        clickedEl.parentElement.classList.add('cs');
         var newRepType = $(e.target).closest('.representation').attr('data-state');
         // add the spinning image
         var repSpinner = '<img class="rep-spinner" alt="rep-spinner" src="images/spinner.gif"/><div class="rep-spinner">Please click a representation to add...</div>'
-        $(e.toElement.parentElement).append(repSpinner);
+        $(clickedEl.parentElement).append(repSpinner);
 
         Logging.logStorage('clicked the plus sign on the ' + this.model.get('label') + ' instrument.'); 
         
@@ -224,7 +226,7 @@ define([
             $('.rep-spinner').remove(); 
             Logging.logStorage('Clicked a plus on the ' + µthis.model.get('label') + ', but failed to add a rep in 6 secs.'); 
             var outOfTime = '<div class="out-of-time">Oops!! Ran out of time...</div>'
-            $(e.toElement.parentElement).append(outOfTime);              
+            $(clickedEl.parentElement).append(outOfTime);              
             setTimeout(function(){
               $('.out-of-time').remove(); 
             },1500)

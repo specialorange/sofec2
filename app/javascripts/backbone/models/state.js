@@ -67,7 +67,15 @@ define([
       if (this.hasGetUserMedia()) {
         console.log("we do have user media access.");
         var µthis = this;
-        navigator.webkitGetUserMedia({audio: true}, function(stream) {
+        // Modern browsers use navigator.mediaDevices.getUserMedia; fall back to the old prefixed API
+        var getMic = function(constraints, ok, fail) {
+          if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia(constraints).then(ok, fail);
+          } else {
+            (navigator.getUserMedia || navigator.webkitGetUserMedia).call(navigator, constraints, ok, fail);
+          }
+        };
+        getMic({audio: true}, function(stream) {
           var microphone = µthis.context.createMediaStreamSource(stream);
           µthis.microphone = microphone;
           µthis.micGain = µthis.context.createGain();
@@ -498,7 +506,7 @@ define([
     },
 
     hasGetUserMedia: function() {
-      return !!(navigator.getUserMedia || navigator.webkitGetUserMedia ||
+      return !!((navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || navigator.getUserMedia || navigator.webkitGetUserMedia ||
                 navigator.mozGetUserMedia || navigator.msGetUserMedia);
     },
 
