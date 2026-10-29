@@ -147,18 +147,22 @@ define([
 
       // Adaptive tap threshold. 2015 used a fixed 0.05, tuned with Chrome's auto gain on.
       // Now: track the room's background level and count anything well above it, never
-      // stricter than the old 0.05 and never below 0.01 so silence can't trigger.
+      // stricter than the old 0.05 and never below 0.003 so silence can't trigger.
       if (this.noiseFloor === null || this.noiseFloor === undefined) { this.noiseFloor = RMS; }
-      var threshold = Math.min(0.05, Math.max(0.01, this.noiseFloor * 6));
+      var threshold = Math.min(0.05, Math.max(0.003, this.noiseFloor * 8));
       if (RMS <= threshold) { this.noiseFloor = this.noiseFloor * 0.98 + RMS * 0.02; }
+
+      // Once a second while listening, log the loudest moment of that second, so a tap shows up.
+      var peak = 0;
+      for (var j = 0; j < waveform.length; j++) { var a = Math.abs(waveform[j]); if (a > peak) { peak = a; } }
+      this.levelMaxRMS = Math.max(this.levelMaxRMS || 0, RMS);
+      this.levelMaxPeak = Math.max(this.levelMaxPeak || 0, peak);
       if (this.isWaiting && (!this.lastLevelLog || time - this.lastLevelLog > 1000)) {
-        var peak = 0;
-        for (var j = 0; j < waveform.length; j++) { var a = Math.abs(waveform[j]); if (a > peak) { peak = a; } }
-        console.log('mic level ' + RMS.toFixed(4) + ' (peak ' + peak.toFixed(3) + '), tap threshold ' + threshold.toFixed(4));
+        console.log('loudest this second: level ' + this.levelMaxRMS.toFixed(4) + ' (peak ' + this.levelMaxPeak.toFixed(3) + '), tap threshold ' + threshold.toFixed(4) + ', background ' + this.noiseFloor.toFixed(4));
         this.lastLevelLog = time;
+        this.levelMaxRMS = 0;
+        this.levelMaxPeak = 0;
       }
-      // console.warn('Time: ' + time + ' RMS: ' + RMS);
-      // console.warn(this.prevTime);
 
       // elapsed time since last beat analysis in ms
       var elapsedTime = time - this.prevTime;
