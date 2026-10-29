@@ -151,7 +151,9 @@ define([
       var threshold = Math.min(0.05, Math.max(0.01, this.noiseFloor * 6));
       if (RMS <= threshold) { this.noiseFloor = this.noiseFloor * 0.98 + RMS * 0.02; }
       if (this.isWaiting && (!this.lastLevelLog || time - this.lastLevelLog > 1000)) {
-        console.debug('mic level ' + RMS.toFixed(4) + ', tap threshold ' + threshold.toFixed(4));
+        var peak = 0;
+        for (var j = 0; j < waveform.length; j++) { var a = Math.abs(waveform[j]); if (a > peak) { peak = a; } }
+        console.log('mic level ' + RMS.toFixed(4) + ' (peak ' + peak.toFixed(3) + '), tap threshold ' + threshold.toFixed(4));
         this.lastLevelLog = time;
       }
       // console.warn('Time: ' + time + ' RMS: ' + RMS);
