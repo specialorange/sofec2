@@ -63,6 +63,8 @@ define([
       }
       this.isWaiting = true;
       this.signature = 0;
+      // Start each recording fresh so the 10-second limit measures this take, not the last one
+      this.startRecordingTime = undefined;
 
       if (this.hasGetUserMedia()) {
         console.log("we do have user media access.");
@@ -75,14 +77,17 @@ define([
             (navigator.getUserMedia || navigator.webkitGetUserMedia).call(navigator, constraints, ok, fail);
           }
         };
-        getMic({audio: true}, function(stream) {
+        // Taps are short clicks: turn off the browser's voice processing, which can filter them out
+        getMic({audio: {echoCancellation: false, noiseSuppression: false, autoGainControl: false}}, function(stream) {
+          // Chrome starts an AudioContext suspended until a user gesture; the record click counts
+          if (µthis.context.state === 'suspended') { µthis.context.resume(); }
           var microphone = µthis.context.createMediaStreamSource(stream);
           µthis.microphone = microphone;
           µthis.micGain = µthis.context.createGain();
-          µthis.micGain.gain = µthis.micLevel;
+          µthis.micGain.gain.value = µthis.micLevel;
           µthis.jsNode = µthis.context.createScriptProcessor(512, 2, 2);
           µthis.microphone.connect(µthis.micGain);
-          µthis.microphone.connect(µthis.context.destination);   
+          // (No longer routing the mic to the speakers; it fed back into the mic and caused false taps)
           µthis.micGain.connect(µthis.jsNode);
           µthis.jsNode.connect(µthis.context.destination);
           µthis.prevTime = new Date().getTime();
@@ -473,13 +478,16 @@ define([
       }
     },
     analyze: function(e){
-      var time = e.timeStamp;
+      // e.timeStamp used to be wall-clock ms; modern browsers measure it from page load,
+      // which never lines up with the Date-based times used everywhere else here.
+      var time = Date.now();
       this.waveform = e.inputBuffer.getChannelData(0);
       this.processWaveform(time, this.waveform);
     },
 
     stopRecording: function() {
       this.signature = 0;
+      this.startRecordingTime = undefined;
       this.countIn = 1;
       this.globalDate = new Date();
       this.previousTime = 0;
